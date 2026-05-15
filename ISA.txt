@@ -1,0 +1,287 @@
+Notes
+$# Means Hex Value (Followed By Number In Actual Assembly)
+$ Means Register (Followed By A Valid Register Number In Assembly Or Working Register Letter)
+# Means Binary Data
+For Storing Registers Assume The Same
+SBMP Stands For Sixteen Bit Micro Processor
+If You Make Any Piece Of Software For This Please Release Both The Compiled Version, A Copy Of The Compile Command, The Source Code
+
+Working Registers
+A, B And C - 16 Bit Registers
+X And Y - 8 Bit Registers
+
+Iteration Registers
+I (16 Bit Default)
+Skip To Iteration In ISA For How To Use
+
+------ ISA (Instruction Set Architecture) ------
+Boot Instructions
+RST Set Jump Point For First Boot Must Be Included At The End
+
+Load Into Register
+LDA $# Or $ (Value Into A)
+LDB $# Or $ (Value Into B)
+LDC $# Or $ (Value Into C)
+LDX $# Or $ (Value Into X)
+LDY $# Or $ (Value Into Y)
+
+Store To Register
+STA $ (Value Into $)
+STB $ (Value Into $)
+STC $ (Value Into $)
+STX $ (Value Into $)
+STY $ (Value Into $)
+STZ $ ($#0000 Into $) (If 8 Bit Stores $#00)
+
+---- Arithmetic Section ----
+CAD - 1 Bit Flag Called As Either CAD 1 Or CAD 0
+- When It Is 1 The Overflow Is Added To LSB 
+- When 0 (Default) The Overflow Is Ignored
+- ($08 Bit 3)
+
+Addition
+ADA $# Or $ (Adds The Value To Working Register)
+ADB $# Or $ (Adds The Value To Working Register)
+ADC $# Or $ (Adds The Value To Working Register)
+ADX $# Or $ (Adds The Value To Working Register)
+ADY $# Or $ (Adds The Value To Working Register)
+
+Subtraction
+If Negative Set Negative Flag ($08 Bit 2) To 1 And Set Value Of Working Reg To 0
+SBA $# Or $ (Takes Value Away From Working Register)
+SBB $# Or $ (Takes Value Away From Working Register)
+SBC $# Or $ (Takes Value Away From Working Register)
+SBX $# Or $ (Takes Value Away From Working Register)
+SBY $# Or $ (Takes Value Away From Working Register)
+
+Div
+Note If Div By 0 Err Return 0
+DVA $ Or $# (Value Becomes Value Div Parameter)
+DVB $ Or $# (Value Becomes Value Div Parameter)
+DVC $ Or $# (Value Becomes Value Div Parameter)
+DVX $ Or $# (Value Becomes Value Div Parameter)
+DVY $ Or $# (Value Becomes Value Div Parameter)
+
+Mod
+MDA $ Or $# (Value Becomes Value Mod Parameter)
+MDB $ Or $# (Value Becomes Value Mod Parameter)
+MDC $ Or $# (Value Becomes Value Mod Parameter)
+MDX $ Or $# (Value Becomes Value Mod Parameter)
+MDY $ Or $# (Value Becomes Value Mod Parameter)
+
+Mult
+If Over Flow Delete
+MXA $ Or $# (Value Becomes Value Times Parameter)
+MXB $ Or $# (Value Becomes Value Times Parameter)
+MXC $ Or $# (Value Becomes Value Times Parameter)
+MXX $ Or $# (Value Becomes Value Times Parameter)
+MXY $ Or $# (Value Becomes Value Times Parameter)
+
+---- End Of Arithmetic Section ----
+
+Iteration
+CLI (No Parameters Clears I To 0)
+ITR (Iterates I By 1 Checks If It Passes Limit And If It Does It Resets)
+Iteration Limit Register ($07) (Sets The Maximum Value Of I Before It Becomes Zero)
+Finished Iteration Register ($08 Bit 1) (When I Resets To 0 Set To 1) (After Read Reset To 0) (1 Bit Flag)
+
+Branches
+Set Position For Branching Added To List In Compiled ROM Format Of "BranchName:"
+Branching reads from register $01, or the A register for the branch condition.
+Note Branch Names Are Case Sensitive And Must Be Followed By The Colon
+BIZ $ Or "BrancName:" (Branch If Zero)
+BIO $ Or "BranchName:"(Branch If One)
+
+---- Audio ----
+Both Audio Commands Take In The Same Parameters Of 8 Bits For Frequency And 8 Bits FOr Length Of Time In cs (Centi Seconds)
+ADN Audio Play With No Wait (Runs The Next Command Immediatly)
+ADW Audio Play With Wait (Runs The Next Command After The Noise Has Been Played)
+Audio Frequencies
+First 32 Frequencies (0x00 - 0x20) Are Different Drums
+Next 88 Frequencies (0x21 To 0x78) NES Style Chiptune From A0 To C8
+Next 88 Frequencies (0x79 To 0xD0) Chip Piano (Triangle Wave) From A0 To C8
+Remaining 48 Frequencies (0xD0 To 0xFF) Programmable Frequencies
+---- End Of Audio ----
+
+Extra
+Extra things that dont fit in other categories
+NOP (No Operation, does nothing for a CPU cycle)
+WAT $# Or $ (Waits For A Parameter Number Of Frames)
+LAC (Loads Current Address Of Instruction Into A)
+
+Debugging
+Some Debugging Commands for Emulator Use Only
+These Will Do Nothing On Actual CPU or With Compiler
+DMP $-$ (Dumps The Value Of The Register Range To Console In Emulator)
+PRT $ (Prints The Value Of The Register To Console In Emulator)
+WAI (Waits For 1 Frame In Emulator, Same As NOP Except Time Difference (1 Frame Instead Of 1 Command Cycle))
+WFT $ Or $# (Waits For The Ammount Of Frames Specified In Register Or Hex Value)
+WFR $ (Waits For The Register Value to Be 0, Used For Input Detection))
+
+------ End Of ISA ------
+
+---- IO (Input Output) ----
+-- Controller Stuff --
+Note This Is 1 Controller Only With 10 Pins
+Pin 1 5V
+Pin 2 GND
+Pin 3 Button A
+Pin 4 Button B
+Pin 5 Up
+Pin 6 Down 
+Pin 7 Left
+Pin 8 Right
+Pin 9 Start
+Pin 10 Reset - Not Used In Game Basically Turns Console Off And On Again (IT Guys Love This One)
+When Not Pressed It's 1 So When 0 Detected Set O Reg Position To 1
+Do Not Set To 0 When No Longer Pressed As Can Lead To Input Undetected
+-- End Controller Stuff --
+-- IO Register Stuff --
+O Register (8 Bit) Stores The Value Of The 8 Buttons ($09)
+IO Power Register (Default 0) ($08 Bit 5)
+---- End Of IO ----
+
+------ Main Register List ------
+---- Sect 0 (System Regs) Start At $0 End At $10----
+Type Means Length In Bits
+$01 = A Type 16
+$02 = B Type 16
+$03 = C Type 16
+$04 = X Type 8
+$05 = Y Type 8
+$06 = I Type 16
+$07 = Iteration Limit Register (Read Iteration For More) Type 16
+
+-- Flag Registers ($08) Type 16 --
+0000 0000 0000 0000 Default
+1 Is LSB
+16 Is HSB
+Bit 1 = Iterate Finished Flag
+Bit 2 = Negative Flag
+Bit 3 = CAD (Carry Add) Flag
+Bit 4 = IO Power
+Bit 5 = PPU Mode
+Bit 6 = PPU Power
+Bit 7 = Screen Size LSB
+Bit 8 = Screen Size HSB
+Bit 9 = Screen Brightness LSB
+Bit 10 = Screen Brightness 
+Bit 11 = Screen Brightness HSB
+Bit 12 = Unused Devs Can Make Changes Here 
+Bit 13 = Unused Devs Can Make Changes Here 
+Bit 14 = Unused Devs Can Make Changes Here 
+Bit 15 = Unused Devs Can Make Changes Here 
+Bit 16 = Unused Devs Can Make Changes Here
+-- Flag List End --
+
+$09 = O Register Type 8
+$10 BG Colour Data This Is The Colour Behind Everything (Before Drawn) Type 16
+---- End Sect 0 ----
+
+--- Sect 1 Dev Vars $11 - $500 ----
+Note This Is Only For Developers To Use These Registers And All Registers Are Type 16
+
+--- Sect 2 Main ROM $501 End $32768 ----
+This Is Where The ASM That Is Compiled Goes Maximum 32268 Lines (On Chip Atleast)
+
+------ Main Register List Ends ------
+
+------ ROM Header ------
+Everything In The Header Is Read Once So No Reg Values ($01 Etc)
+Start With .header
+Boths Lengths Are 1 Register
+Length Of ROM rl $#
+Length Of Developer Vars vl $#
+---- -e Flag Only Stuff ----
+If You Want A Custom Screen Size (Replaces 4) ss $#
+Size Of PPU Registers ppus $#
+Upscaling For Bitmap Mode up $# (First 4 Bits Are X Axis Second 4 Bits Is Y Axis)
+Tile Map Amount tm $# (Amount Of Tiles)
+Size Of Tile ts $# (First 4 Bits Are X Axis Second 4 Bits Is Y Axis)
+End With .endheader
+------ End Of ROM Header ------
+
+------ PPU Register List And Data ------
+---- Main Registers Used In The PPU ----
+PPU Mode (Sets PPU Mode Flag ($08 Bit 6)) (Default 0) (0=Bitmap) (1=Tilemap)
+PPU Power Is $08 Bit 7 (0 PPU Off 1 PPU On)
+Screen Size Setting Is In $08 Bit 7,8
+$#0 256*144
+$#1 320*176
+$#2 224*168
+$#3 288*216
+Screen Brightness Setting (Only Referenced In Final)
+They Are $08 Bit 9,10,11
+0 Off
+1 Lowest
+8 Highest
+PPU Registers Are Referenced As Whatever Total Length Of ROM In Registers Is +The Number Of Register In PPU
+
+---- End Of Main Registers Used In PPU ----
+---- How To Do Colours ----
+Colours Are Always Defined Using The Following Method
+1 Bit For Transparency (1 Is Can See The Colour 0 Is Can't See The Colour)
+5 Bits For R 5 Bits For G And 5 Bits For B
+TRRRRRGGGGGBBBBB
+---- End Colours ----
+
+---- Video Display ----
+There Are 2 Modes Of Data Display In The PPU And It Is Set In Main $08 Bit 6
+The Modes Are Bitmap And Tilemap
+
+-- Tilemap Mode--
+Note Tilemap Uses 1 Main Map For Foreground And Background Objects With A Secondary Map For Sprite Map 
+-- Tile Maps --
+Reg $01 - $16384 Map Of 256 Tiles For Blocks Type 16
+Reg $16385 - $17409 Map Of 16 Tiles For Player Sprites
+Screen Type 16
+-- Layering --
+The 3 Layers Are BG FG And SL (Background Foreground And Sprite Layer)
+The Size Of Each Layer Depends On Main Reg $08 Bit 8,9 Setting
+BG And FG Reference The Main Map With A Full Byte Of Data For Each Tile (The 256 Combinations)
+SL Or Sprite Layer Is Only 1 Nibble Per Tile (16 Combinations) So W/16 For 8 Because Of Tile Map And 2 Because There Can Be 2 Tiles Referenced To Register Then H/8 Again Because 8*8 Tiles
+The Final Size Of This Registers Should Be 2((W*H)/64)+(W*H)/128 For Total Amount Of Registers
+
+-- Bitmap Mode --
+It's Quite Simple But Not As Memory Efficient As Tilemap
+Starts At $01
+Using 16 Bit Registers Per Piece Of Data Going Left To Right Then Down However This Is Upscaled So 2*1 Pixels As That Would Otherwise Need Upto 31k Registers Which Is Alot And Breaks My 20k PPU Register Limit
+Register Calculation Is W*H
+
+-- Final Colour Output --
+These Only Make 31 Which Isn't In Our 255,255,255 Standard Today So Instead We Multiply By The Brightness Setting Where The Max Is 8 Giving An Actual Colour Roof Being 248
+
+------ PPU Register List End ------
+
+------ Compilation ------
+:: Is A Comment So You Don't Suffer Too Much
+Write Your .asm File (Game Code)
+Write Your .ppu File (PPU Data) (TILE MAP ONLY)
+Compile Using
+sbmpc main.o code.o
+If Tile Map
+Link With PPU Data Using The SBMP Linker
+sbmpl code.o ppudata.ppu finalcode.sbmp
+If Bitmap
+sbmpl code.o finalcode.sbmp
+---- Compiler Flags ----
+-e Emulator Mode Removes All Limits On Compilation And Allows Custom Stuff
+------ End Of Compilation ------
+------ Emulation ------
+smbpe.exe can be used in two different modes, raw and file mode.
+
+Raw mode is used for testing small snippets of assembly code. It takes the assembly code as input, compiles it, and runs it in the emulator. This mode is useful for quick tests and debugging.
+Example usage:
+   smbpe.exe -r "LDA $01; STA $02; RST"
+Note: The assembly code should be enclosed in quotes. Lines are separated by semicolons, this is only for raw mode and not consistent across other modes.
+
+File mode is used for running complete programs stored in .smbp files. It takes the file path as input, loads the program, and runs it in the emulator. This mode is suitable for running larger programs and games.
+Example usage:
+   smbpe.exe -f path/to/your/program.smbp
+   smbpe.exe -g -f path/to/your/program/with/graphics.smbp 
+Note: Ensure the file path is correct and the file exists. If file has graphics, specify the -g flag. If programs that have graphics are not used with the -g flag, the graphics will not be rendered.
+Additional flags:
+   -d : Enables debug mode, providing detailed output for debugging purposes.
+   -h : Displays help information about the emulator's usage and options.
+   -g : Enables graphics mode, allowing the rendering of graphical elements if the program supports it.
+------ End Of Emulation ------
