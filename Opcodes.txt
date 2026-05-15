@@ -1,0 +1,82 @@
+-- Info --
+Opcodes Are 6 Bits
+Current Total Amount Of Operations : 46
+
+-- No Operaction --
+NOP, 0000,00
+
+-- Reset --
+RST, 0000,01
+
+-- Load --
+LDA, 0000,10
+LDB, 0000,11
+LDC, 0001,00
+LDX, 0001,01
+LDY, 0001,10
+
+-- Store --
+STA, 0001,11
+STB, 0010,00
+STC, 0010,01
+STX, 0010,10
+STY, 0010,11
+STZ, 0011,00
+
+---- Arithmetic ----
+
+-- Addition --
+ADA, 0011,01
+ADB, 0011,10
+ADC, 0011,11
+ADX, 0100,00
+ADY, 0100,01
+
+-- Subtraction --
+SBA, 0100,10
+SBB, 0100,11
+SBC, 0101,00
+SBX, 0101,01
+SBY, 0101,10
+
+-- Integer Divison --
+DVA, 0101,11
+DVB, 0110,00
+DVC, 0110,01
+DVX, 0110,10
+DVY, 0110,11
+
+-- Modulus --
+MDA, 0111,00
+MDB, 0111,01
+MDC, 0111,10
+MDX, 0111,11
+MDY, 1000,00
+
+-- Multiplication --
+MXA, 1000,01
+MXB, 1000,10
+MXC, 1000,11
+MXX, 1001,00
+MXY, 1001,01
+
+---- End Of Arithmetic ----
+
+-- Iteration --
+CLI, 1001,10
+ITR, 1001,11
+
+-- Branching --
+BIZ, 1010,00
+BIO, 1010,01
+JMP, 1010,10
+
+-- Audio --
+ADN, 1010,11
+ADW, 1011,00
+
+-- Extras --
+LAC, 1011,01
+
+//Debugging for compiler, disabled in actual code
+DMP // This Doesn't Need An Opcode So It Isn't Getting One
