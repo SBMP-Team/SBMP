@@ -1,4 +1,5 @@
 #include "lookup.h"
+#include <string.h>
 
 typedef struct {
     const char* Mnemonic;

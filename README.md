@@ -15,11 +15,6 @@ Detailed documentation about the ISA can be found in the [isa.txt](isa.txt) file
 - Sound
 - Graphics
 
-## Getting Started
-
-To get started with SBMP, you can clone this repository and explore the [tutorials](tutorials) folder for example programs and guides on how to write assembly code for SBMP.
-Building the Compiler, Linker, Emulator and Editor requires C++, CMAKE, and VCPKG. Or you can download the prebuilt binaries from the releases page.
-
 ## Writing a Program
 
 Writing a program for SBMP is fairly simple, as long as you are familiar with assembly language concepts and low level programming. By default, the emulator will print out the last value in register 0x0000 when the program halts, this can be used as an output if needed.
