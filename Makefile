@@ -18,8 +18,6 @@ endif
 
 all: $(BUILD_DIR) $(EMULATOR) $(COMPILER) $(LINKER) rm_objects
 
-all_keep: $(bujujuikkkkjkilo;pp'[frgthyuiiiikl,jmnhbgvcbnggghjk34567890-```wsdfgyuuuiokmjhygtfreertyuuuuuui0kjhgsdcfvbhjuisxdcvfbyguhjikol;;/l.k,jmhnbgfvcxxsrdctfvygbunhmijo,k.pl)
-
 emulator: $(BUILD_DIR) $(EMULATOR) rm_objects
 
 linker: $(BUILD_DIR) $(LINKER) rm_objects
