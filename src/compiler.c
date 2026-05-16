@@ -63,6 +63,47 @@ int main(int argc, char* argv[]) {
 
     fclose(fptr);
 
+    // Jump Label Searching
+    typedef struct {
+        char Name[64];
+        uint16_t Address;
+    } Label;
+
+    Label *Labels = NULL;
+    size_t LabelCount = 0;
+    size_t OpcodeAddress = 0;
+
+    for (size_t i = 0; i < lineCount; i++) {
+        char *scan = malloc(strlen(lines[i]) + 1);
+        strcpy(scan, lines[i]);
+
+        char *comment = strstr(scan, "::");
+        if (comment) *comment = '\0';
+
+        char *token = scan;
+        while (*token == ' ' || *token == '\t') token++;
+
+        size_t len = strlen(token);
+        while (len > 0 && (token[len - 1] == ' ' || token[len - 1] == '\t')) len--;
+        token[len] = '\0';
+
+        if (len == 0) { free(scan); continue; }
+
+        if (token[len - 1] == ':') {
+            token[len - 1] = '\0';
+            Labels = realloc(Labels, sizeof(Label) * (LabelCount + 1));
+            strncpy(Labels[LabelCount].Name, token, 63);
+            Labels[LabelCount].Name[63] = '\0';
+            Labels[LabelCount].Address = (uint16_t)(OpcodeAddress * 3);
+            LabelCount++;
+        } else {
+            OpcodeAddress++;
+        }
+
+        free(scan);
+    }
+
+
     OptcodePair* instructions = malloc(sizeof(OptcodePair) * lineCount);
     size_t instructionsCount = 0;
     // Example usage
@@ -71,10 +112,9 @@ int main(int argc, char* argv[]) {
         size_t len = strlen(line);
         size_t j = 0;
 
-        char *token = strtok(line, "::");
-        if (token == NULL) {
-            continue;
-        }
+        char *comment = strstr(line, "::");
+        if (comment) *comment = '\0';
+        char *token = line;
         while (token[j] == ' '){
             j++;
         }
@@ -86,10 +126,10 @@ int main(int argc, char* argv[]) {
         token[j] = '\0';
 
         if (token[0] != '\0') {
-            char optcode[4];
-            char data[9];
+            char optcode[4] = {0};
+            char data[9] = {0};
             printf("LINE %lu: %s\n", i, line);
-            if (strcmp(token,"start") == 0) continue;
+            if (token[strlen(token) - 1] == ':') continue;
             sscanf(token, "%3s %8s", optcode, data);
             printf("OPTCODE: %s\n", optcode);
             printf("DATA: %s\n", data);
@@ -107,6 +147,23 @@ int main(int argc, char* argv[]) {
 
             OptcodePair* opt = &instructions[instructionsCount - 1];
             opt->opcode = LookupOpcode(optcode);
+
+            // Jump Label Parsing
+            if (data[0] != '#' && data[0] != '$' && data[0] != '\0') {
+                size_t dlen = strlen(data);
+                if (data[dlen - 1] == ':') data[dlen - 1] = '\0';
+                int found = 0;
+                for (size_t k = 0; k < LabelCount; k++) {
+                    if (strcmp(Labels[k].Name, data) == 0) {
+                        opt->operand = Labels[k].Address;
+                        found = 1;
+                        break;
+                    }
+                }
+                if (!found) { printf("undefined label '%s'\n", data); goto error; }
+            }
+
+            // Regular data Parsing
             if (data[0] == '#') {
                 if (data[1] == '$') {
                     // Interpret as binary data, remove the last first two characters and continue
@@ -186,6 +243,7 @@ int main(int argc, char* argv[]) {
     free(lines);
     free(instructions);
     fclose(fptr);
+    free(Labels);
     return 0;
 error:
 for (size_t i = 0; i < lineCount; i++) {
@@ -194,6 +252,7 @@ for (size_t i = 0; i < lineCount; i++) {
     free(lines);
     free(instructions);
     fclose(fptr);
+    free(Labels);
     return 1;
 }
 
