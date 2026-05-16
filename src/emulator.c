@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    uint8_t Mem[65536][3];
+    uint8_t Memory[65536][3];
 
     uint16_t Addr = 0;
     uint8_t Buf[3];
@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
                 fprintf(stderr, "Unknown Opcode: 0x%02X At PC: %u\n", Memory[PC][1], PC);
                 break;
         }
-        PC++
+        PC++;
     }
 
     return 0;
