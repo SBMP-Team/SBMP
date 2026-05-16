@@ -178,10 +178,10 @@ $09 = O Register Type 8
 $10 BG Colour Data This Is The Colour Behind Everything (Before Drawn) Type 16
 ---- End Sect 0 ----
 
---- Sect 1 Dev Vars $11 - $500 ----
+--- Sect 1 Dev Vars $11 - $511 ----
 Note This Is Only For Developers To Use These Registers And All Registers Are Type 16
 
---- Sect 2 Main ROM $501 End $32768 ----
+--- Sect 2 Main ROM $512 End $32768 ----
 This Is Where The ASM That Is Compiled Goes Maximum 32268 Lines (On Chip Atleast)
 
 ------ Main Register List Ends ------
