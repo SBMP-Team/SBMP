@@ -137,22 +137,22 @@ When Not Pressed It's 1 So When 0 Detected Set O Reg Position To 1
 Do Not Set To 0 When No Longer Pressed As Can Lead To Input Undetected
 -- End Controller Stuff --
 -- IO Register Stuff --
-O Register (8 Bit) Stores The Value Of The 8 Buttons ($09)
-IO Power Register (Default 0) ($08 Bit 5)
+O Register (8 Bit) Stores The Value Of The 8 Buttons ($012)
+IO Power Register (Default 0) ($011 Bit 5)
 ---- End Of IO ----
 
 ------ Main Register List ------
----- Sect 0 (System Regs) Start At $0 End At $10----
+---- Sect 0 (System Regs) Start At $2 End At $12----
 Type Means Length In Bits
-$01 = A Type 16
-$02 = B Type 16
-$03 = C Type 16
-$04 = X Type 8
-$05 = Y Type 8
-$06 = I Type 16
-$07 = Iteration Limit Register (Read Iteration For More) Type 16
+$03 = A Type 16
+$05 = B Type 16
+$06 = C Type 16
+$07 = X Type 8
+$08 = Y Type 8
+$09 = I Type 16
+$010 = Iteration Limit Register (Read Iteration For More) Type 16
 
--- Flag Registers ($08) Type 16 --
+-- Flag Registers ($11) Type 16 --
 0000 0000 0000 0000 Default
 1 Is LSB
 16 Is HSB
@@ -174,24 +174,24 @@ Bit 15 = Unused Devs Can Make Changes Here
 Bit 16 = Unused Devs Can Make Changes Here
 -- Flag List End --
 
-$09 = O Register Type 8
-$10 BG Colour Data This Is The Colour Behind Everything (Before Drawn) Type 16
+$12 = O Register Type 8
+$13 BG Colour Data This Is The Colour Behind Everything (Before Drawn) Type 16
 ---- End Sect 0 ----
 
---- Sect 1 Dev Vars $11 - $511 ----
+The dev var (RAM) offset is defined in register 0x0, the ROM offset is defined in 0x1 and the PPU offset is defined in 0x2
+--- Sect 1 Dev Vars (Value of $0x0) - (Value of $0x1) ----
 Note This Is Only For Developers To Use These Registers And All Registers Are Type 16
 
---- Sect 2 Main ROM $512 End $32768 ----
-This Is Where The ASM That Is Compiled Goes Maximum 32268 Lines (On Chip Atleast)
+--- Sect 2 Main ROM (Value of $0x1) - (Value of $0x2) ----
+This Is Where The ASM That Is Compiled.
+
+--- Sect 2 PPU ROM (Value of $0x2) - $0xFFFF ----
+This is where the PPU data is stored for retrival
 
 ------ Main Register List Ends ------
 
 ------ ROM Header ------
-Everything In The Header Is Read Once So No Reg Values ($01 Etc)
-Start With .header
-Boths Lengths Are 1 Register
-Length Of ROM rl $#
-Length Of Developer Vars vl $#
+Headers are defined in the Linker, run sbmpl -h to see usage.
 ---- -e Flag Only Stuff ----
 If You Want A Custom Screen Size (Replaces 4) ss $#
 Size Of PPU Registers ppus $#
