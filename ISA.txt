@@ -218,6 +218,7 @@ They Are $08 Bit 9,10,11
 PPU Registers Are Referenced As Whatever Total Length Of ROM In Registers Is +The Number Of Register In PPU
 
 ---- End Of Main Registers Used In PPU ----
+
 ---- How To Do Colours ----
 Colours Are Always Defined Using The Following Method
 1 Bit For Transparency (1 Is Can See The Colour 0 Is Can't See The Colour)
