@@ -42,9 +42,12 @@ int main(int argc, char* argv[]) {
         printf("USAGE: \n -h/--help Prints this help menu and exits.\n -i/--input-file [filepath] Specifies the input .o file\n -p/--ppu-file [filepath] Specifies the input .ppu file\n -o/--output-file [filepath] Specifies the output .sbmp file\nFLAGS:\n --rom-offset [0x0-0xFFFF] this sets the 0x1 register to specify where program ROM starts, the usable ram will be between this and the ram offset.\n --ppu-offset [0x0-0xFFFF] Specifies the offset of PPU Memory, this will set the 0x2 register to this value.\n");
         return 0;
     }
+
     int arg = 0;
     FILE *infile = NULL;
     FILE *outfile = NULL;
+    FILE *ppufile = NULL;
+
     uint16_t romOffset = MEMORY_OFFSET;
     uint16_t ppuOffset = PPU_OFFSET;
 
@@ -82,7 +85,10 @@ int main(int argc, char* argv[]) {
                 }
                 case 'p': {
                     arg++;
-                    printf("PPU File loading not implemented");
+                    ppufile = fopen(argv[arg], "rb");
+                    if (outfile == NULL) {
+                        printf("Unable to open output file from %s\n", argv[arg]);
+                    }
                     break;
                 }
             }
@@ -128,8 +134,15 @@ int main(int argc, char* argv[]) {
     }
     printf("Wrote %lu words to output file from 0x2 to %hu, starting ppu section.", words, romOffset);
 
-    for (size_t i = ppuOffset; i < 0xFFFF; i++) {
-        fwrite(&zero, sizeof(uint16_t), 1, outfile);
+    if (ppufile == NULL) {
+        for (size_t i = ppuOffset; i < 0x8000+ppuOffset; i++) {
+            fwrite(&zero, sizeof(uint16_t), 1, outfile);
+        } 
+    } else {
+        uint16_t *buffer = malloc(32768 * sizeof(uint16_t));
+        size_t count = fread(buffer, sizeof(uint16_t), 32768, ppufile);
+        fwrite(buffer, sizeof(uint16_t), count, outfile);
+        free(buffer);
     }
 
 
