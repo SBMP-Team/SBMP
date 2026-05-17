@@ -37,7 +37,7 @@ STZ $ ($#0000 Into $) (If 8 Bit Stores $#00)
 CAD - 1 Bit Flag Called As Either CAD 1 Or CAD 0
 - When It Is 1 The Overflow Is Added To LSB 
 - When 0 (Default) The Overflow Is Ignored
-- ($08 Bit 3)
+- ($11 Bit 3)
 
 Addition
 ADA $# Or $ (Adds The Value To Working Register)
@@ -82,8 +82,8 @@ MXY $ Or $# (Value Becomes Value Times Parameter)
 Iteration
 CLI (No Parameters Clears I To 0)
 ITR (Iterates I By 1 Checks If It Passes Limit And If It Does It Resets)
-Iteration Limit Register ($07) (Sets The Maximum Value Of I Before It Becomes Zero)
-Finished Iteration Register ($08 Bit 1) (When I Resets To 0 Set To 1) (After Read Reset To 0) (1 Bit Flag)
+Iteration Limit Register ($10) (Sets The Maximum Value Of I Before It Becomes Zero)
+Finished Iteration Register ($11 Bit 1) (When I Resets To 0 Set To 1) (After Read Reset To 0) (1 Bit Flag)
 
 Branches
 Set Position For Branching Added To List In Compiled ROM Format Of "BranchName:"
