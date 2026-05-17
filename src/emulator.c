@@ -27,14 +27,32 @@ int main(int argc, char *argv[]) {
 
     fclose(File);
 
-    uint16_t PC = 512;
+    uint16_t PC = Memory[1];
 
-    while (!(PC < 0 || PC > 32768)) {
+    while (!(PC < 0 || PC > Memory[2])) {
         switch (Memory[PC][1] & 0b11111100) {
             case 0b00000000: // NOP
                 break;
             case 0b00000100: // RST
-                break;
+                if (argc < 2) {
+                    fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
+                    return 1;
+                }
+
+                FILE *File = fopen(argv[1], "rb");
+                if (!File) {
+                    fprintf(stderr, "Error: Could not open file '%s'\n", argv[1]);
+                    return 1;
+                }
+
+                Addr = 0;
+                while (fread(Buf, 1, 3, File) == 3) {
+                    Memory[Addr][0] = Buf[0];
+                    Memory[Addr][1] = Buf[1];
+                    Memory[Addr][2] = Buf[2];
+                    Addr++;
+                }
+                PC = 512;
 
             // -- Load --
             case 0b00001000: // LDA
