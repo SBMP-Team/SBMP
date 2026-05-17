@@ -1,7 +1,7 @@
 Notes
-$# Means Hex Value (Followed By Number In Actual Assembly)
+# Means Hex Value (Followed By Number In Actual Assembly)
 $ Means Register (Followed By A Valid Register Number In Assembly Or Working Register Letter)
-# Means Binary Data
+$#/#$ Means Binary Data
 For Storing Registers Assume The Same
 SBMP Stands For Sixteen Bit Micro Processor
 If You Make Any Piece Of Software For This Please Release Both The Compiled Version, A Copy Of The Compile Command, The Source Code
@@ -178,14 +178,14 @@ $12 = O Register Type 8
 $13 BG Colour Data This Is The Colour Behind Everything (Before Drawn) Type 16
 ---- End Sect 0 ----
 
-The dev var (RAM) offset is defined in register 0x0, the ROM offset is defined in 0x1 and the PPU offset is defined in 0x2
---- Sect 1 Dev Vars (Value of $0x0) - (Value of $0x1) ----
+The ROM offset is defined in 0x0 and the PPU offset is defined in 0x1, 0x2 is unused but will be used later
+--- Sect 1 Dev Vars 0x3 - (Value of $0x0) ----
 Note This Is Only For Developers To Use These Registers And All Registers Are Type 16
 
---- Sect 2 Main ROM (Value of $0x1) - (Value of $0x2) ----
+--- Sect 2 Main ROM (Value of $0x0) - (Value of $0x1) ----
 This Is Where The ASM That Is Compiled.
 
---- Sect 2 PPU ROM (Value of $0x2) - $0xFFFF ----
+--- Sect 2 PPU ROM (Value of $0x1) - $0xFFFF ----
 This is where the PPU data is stored for retrival
 
 ------ Main Register List Ends ------
@@ -203,15 +203,15 @@ End With .endheader
 
 ------ PPU Register List And Data ------
 ---- Main Registers Used In The PPU ----
-PPU Mode (Sets PPU Mode Flag ($08 Bit 6)) (Default 0) (0=Bitmap) (1=Tilemap)
+PPU Mode (Sets PPU Mode Flag ($11 Bit 6)) (Default 0) (0=Bitmap) (1=Tilemap)
 PPU Power Is $08 Bit 7 (0 PPU Off 1 PPU On)
-Screen Size Setting Is In $08 Bit 7,8
+Screen Size Setting Is In $11 Bit 7,8
 $#0 256*144
 $#1 320*176
 $#2 224*168
 $#3 288*216
 Screen Brightness Setting (Only Referenced In Final)
-They Are $08 Bit 9,10,11
+They Are $11 Bit 9,10,11
 0 Off
 1 Lowest
 8 Highest
@@ -227,7 +227,7 @@ TRRRRRGGGGGBBBBB
 ---- End Colours ----
 
 ---- Video Display ----
-There Are 2 Modes Of Data Display In The PPU And It Is Set In Main $08 Bit 6
+There Are 2 Modes Of Data Display In The PPU And It Is Set In Main $11 Bit 6
 The Modes Are Bitmap And Tilemap
 
 -- Tilemap Mode--
@@ -262,14 +262,14 @@ Compile Using
 sbmpc main.o code.o
 If Tile Map
 Link With PPU Data Using The SBMP Linker
-sbmpl code.o ppudata.ppu finalcode.sbmp
+sbmpl -i code.o -p ppudata.ppu -o finalcode.sbmp --rom-offset 0x200 --ppu-offset 0x8000
 If Bitmap
-sbmpl code.o finalcode.sbmp
+sbmpl -i code.o -o finalcode.sbmp --rom-offset 0x200
 ---- Compiler Flags ----
 -e Emulator Mode Removes All Limits On Compilation And Allows Custom Stuff
 ------ End Of Compilation ------
 ------ Emulation ------
-smbpe.exe can be used in two different modes, raw and file mode.
+smbpe can be used in two different modes, raw and file mode.
 
 Raw mode is used for testing small snippets of assembly code. It takes the assembly code as input, compiles it, and runs it in the emulator. This mode is useful for quick tests and debugging.
 Example usage:
@@ -278,8 +278,8 @@ Note: The assembly code should be enclosed in quotes. Lines are separated by sem
 
 File mode is used for running complete programs stored in .smbp files. It takes the file path as input, loads the program, and runs it in the emulator. This mode is suitable for running larger programs and games.
 Example usage:
-   smbpe.exe -f path/to/your/program.smbp
-   smbpe.exe -g -f path/to/your/program/with/graphics.smbp 
+   smbpe -f path/to/your/program.smbp
+   smbpe -g -f path/to/your/program/with/graphics.smbp
 Note: Ensure the file path is correct and the file exists. If file has graphics, specify the -g flag. If programs that have graphics are not used with the -g flag, the graphics will not be rendered.
 Additional flags:
    -d : Enables debug mode, providing detailed output for debugging purposes.
