@@ -233,6 +233,9 @@ int main(int argc, char* argv[]) {
         write_instruction(outfptr, ins->opcode, ins->operand);
 
     }
+
+    printf("Your program is %lu words long, recomended PPU Offset is %lu", instructionsCount*2, 512+(instructionsCount*2));
+
     fclose(outfptr);
 
     // Cleanup
