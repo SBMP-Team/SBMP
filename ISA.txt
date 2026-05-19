@@ -37,7 +37,7 @@ STZ $ ($#0000 Into $) (If 8 Bit Stores $#00)
 CAD - 1 Bit Flag Called As Either CAD 1 Or CAD 0
 - When It Is 1 The Overflow Is Added To LSB 
 - When 0 (Default) The Overflow Is Ignored
-- ($11 Bit 3)
+- ($9 Bit 3)
 
 Addition
 ADA $# Or $ (Adds The Value To Working Register)
@@ -83,7 +83,7 @@ Iteration
 CLI (No Parameters Clears I To 0)
 ITR (Iterates I By 1 Checks If It Passes Limit And If It Does It Resets)
 Iteration Limit Register ($10) (Sets The Maximum Value Of I Before It Becomes Zero)
-Finished Iteration Register ($11 Bit 1) (When I Resets To 0 Set To 1) (After Read Reset To 0) (1 Bit Flag)
+Finished Iteration Register ($9 Bit 1) (When I Resets To 0 Set To 1) (After Read Reset To 0) (1 Bit Flag)
 
 Branches
 Set Position For Branching Added To List In Compiled ROM Format Of "BranchName:"
@@ -138,21 +138,21 @@ Do Not Set To 0 When No Longer Pressed As Can Lead To Input Undetected
 -- End Controller Stuff --
 -- IO Register Stuff --
 O Register (8 Bit) Stores The Value Of The 8 Buttons ($012)
-IO Power Register (Default 0) ($011 Bit 5)
+IO Power Register (Default 0) ($9 Bit 5)
 ---- End Of IO ----
 
 ------ Main Register List ------
 ---- Sect 0 (System Regs) Start At $2 End At $12----
 Type Means Length In Bits
 $03 = A Type 16
-$05 = B Type 16
-$06 = C Type 16
-$07 = X Type 8
-$08 = Y Type 8
-$09 = I Type 16
-$010 = Iteration Limit Register (Read Iteration For More) Type 16
+$04 = B Type 16
+$05 = C Type 16
+$06 (0-8) = X Type 8
+$06 (8-16) = Y Type 8
+$07 = I Type 16
+$08 = Iteration Limit Register (Read Iteration For More) Type 16
 
--- Flag Registers ($11) Type 16 --
+-- Flag Registers ($9) Type 16 --
 0000 0000 0000 0000 Default
 1 Is LSB
 16 Is HSB
@@ -178,14 +178,14 @@ $12 = O Register Type 8
 $13 BG Colour Data This Is The Colour Behind Everything (Before Drawn) Type 16
 ---- End Sect 0 ----
 
-The ROM offset is defined in 0x0 and the PPU offset is defined in 0x1, 0x2 is unused but will be used later
---- Sect 1 Dev Vars 0x3 - (Value of $0x0) ----
+The controller data is defined in 0x0 and the ROM offset is defined in 0x1, PPU offset is defined in 0x2
+--- Sect 1 Dev Vars 0x3 - (Value of $0x1) ----
 Note This Is Only For Developers To Use These Registers And All Registers Are Type 16
 
---- Sect 2 Main ROM (Value of $0x0) - (Value of $0x1) ----
+--- Sect 2 Main ROM (Value of $0x1) - (Value of $0x2) ----
 This Is Where The ASM That Is Compiled.
 
---- Sect 2 PPU ROM (Value of $0x1) - $0xFFFF ----
+--- Sect 2 PPU ROM (Value of $0x2) - $0xFFFF ----
 This is where the PPU data is stored for retrival
 
 ------ Main Register List Ends ------
@@ -203,15 +203,15 @@ End With .endheader
 
 ------ PPU Register List And Data ------
 ---- Main Registers Used In The PPU ----
-PPU Mode (Sets PPU Mode Flag ($11 Bit 6)) (Default 0) (0=Bitmap) (1=Tilemap)
+PPU Mode (Sets PPU Mode Flag ($9 Bit 6)) (Default 0) (0=Bitmap) (1=Tilemap)
 PPU Power Is $08 Bit 7 (0 PPU Off 1 PPU On)
-Screen Size Setting Is In $11 Bit 7,8
+Screen Size Setting Is In $9 Bit 7,8
 $#0 256*144
 $#1 320*176
 $#2 224*168
 $#3 288*216
 Screen Brightness Setting (Only Referenced In Final)
-They Are $11 Bit 9,10,11
+They Are $9 Bit 9,10,11
 0 Off
 1 Lowest
 8 Highest
@@ -227,7 +227,7 @@ TRRRRRGGGGGBBBBB
 ---- End Colours ----
 
 ---- Video Display ----
-There Are 2 Modes Of Data Display In The PPU And It Is Set In Main $11 Bit 6
+There Are 2 Modes Of Data Display In The PPU And It Is Set In Main $9 Bit 6
 The Modes Are Bitmap And Tilemap
 
 -- Tilemap Mode--

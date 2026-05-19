@@ -111,13 +111,13 @@ int main(int argc, char* argv[]) {
     fwrite(&two,sizeof(uint16_t),1,outfile);
     fwrite(&romOffset, sizeof(uint16_t),1,outfile);
     fwrite(&ppuOffset, sizeof(uint16_t),1,outfile);
-    for (int i = two; i < romOffset; i++) {
+    for (int i = two; i < romOffset-1; i++) {
         fwrite(&zero, sizeof(uint16_t), 1, outfile);
     }
 
     uint8_t opcode = 0;
     uint16_t operand = 0;
-    size_t words = two + romOffset;
+    size_t words = 0x1 + romOffset;
 
     //read optcode/instruction pairs from the in file and write each to its own line.
     while (read_instruction(infile, &opcode, &operand)) {
