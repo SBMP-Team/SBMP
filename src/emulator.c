@@ -23,6 +23,12 @@ static inline uint8_t* Y(CPU* cpu) {
     return (uint8_t*)&cpu->memory[0x0005];
 }
 
+static uint16_t readWord(FILE* file) {
+    uint16_t word;
+    fread(&word, sizeof(uint16_t), 1, file);
+    return word;
+}
+
 int main(int argc, char *argv[]) {
     CPU cpu = {0};
     FILE *infile = fopen(argv[1], "rb");
@@ -30,6 +36,11 @@ int main(int argc, char *argv[]) {
         printf("Error opening input file\n");
         return 1;
     }
+    for (uint16_t i = 0; i < 0xFFFF; i++) {
+        cpu.memory[i] = readWord(infile);
+    }
+    fclose(infile);
+    printf("CPU Loading complete");
 
 
     return 0;
