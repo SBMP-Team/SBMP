@@ -1,7 +1,7 @@
 module tb_cpu;
 
     logic clk = 0;
-    logic rst;
+    logic rst=1;
 
     // inputs
     logic btnA, btnB, btnUp, btnDown, btnLeft, btnRight, btnStart;
@@ -26,7 +26,7 @@ module tb_cpu;
 
         $dumpfile("wave.vcd");
         $dumpvars(0, tb_cpu);
-        for (int i = 0; i < 512; i++) begin
+        for (int i = 0; i < 552; i++) begin
             $dumpvars(0, dut.memory[i]);
         end
 
@@ -55,14 +55,14 @@ module tb_cpu;
         btnRight = 0;
         btnStart = 0;
 
-        rst = 1;
         #20;
         rst = 0;
+
 
         // run simulation
         #5000;
 
-        $display("Complete, value of A register at end is ", dut.memory[3]);
+        $display("Complete,", dut.memory[0]);
         
         
         
