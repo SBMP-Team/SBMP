@@ -32,9 +32,10 @@ module CPU
     logic[5:0] opcode;
     logic register_flag;
     logic jump_flag;
-    // assign opcode = packed_opcode[7:2];
-    // assign register_flag = packed_opcode[0];
-    // assign jump_flag = packed_opcode[1];
+    assign register_flag = packed_opcode[15];
+    assign jump_flag = packed_opcode[14];
+    assign opcode = packed_opcode[13:8];
+   
 
     logic writeback_enable = 1'b1;
 
@@ -64,7 +65,6 @@ module CPU
                     cpu_phase <= READ;
                 end
                 READ:begin
-                    opcode <= packed_opcode[7:2];
                     cpu_phase <= EXECUTE;
                 end
                 EXECUTE:begin
